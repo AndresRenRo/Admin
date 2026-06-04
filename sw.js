@@ -1,4 +1,4 @@
-const C = 'aganar-v1';
+const C = 'aganar-v2';
 const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
