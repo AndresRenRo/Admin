@@ -202,6 +202,12 @@
   .config-link{font-size:13px;font-weight:600;color:var(--fg-soft);cursor:pointer;background:var(--bg-2);border:2px solid var(--line);border-radius:999px;padding:10px 18px;margin-top:24px;font-family:"Fredoka"}
   .config-link:hover{color:var(--fg);border-color:var(--line-2)}
 
+  /* ACCESOS */
+  .links{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 22px}
+  .lnk{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:"Fredoka";font-size:13px;font-weight:600;color:var(--fg);background:var(--bg-2);border:2px solid var(--line);border-radius:999px;padding:9px 15px;transition:.12s}
+  .lnk:hover{border-color:var(--line-2);transform:translateY(-1px)}
+  .lnk i{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+
   @media(max-width:600px){
     .wrap{padding:0 16px}
     .masthead{flex-direction:column}
@@ -266,6 +272,13 @@
     <div class="balance" id="balance" style="display:none"></div>
     <div class="sectitle">Estructura de la semana</div>
     <div class="weekgrid" id="weekgrid"></div>
+    <div class="sectitle">Accesos</div>
+    <div class="links">
+      <a class="lnk" target="_blank" rel="noopener" href="https://manual-paislector.vercel.app/#hgr-experimentos"><i style="background:#5b8cff"></i>Manual</a>
+      <a class="lnk" target="_blank" rel="noopener" href="https://paislector.com"><i style="background:#ff8a3d"></i>País Lector</a>
+      <a class="lnk" target="_blank" rel="noopener" href="https://thehumanglitchreport.com"><i style="background:#ffce4a"></i>HGR</a>
+      <a class="lnk" target="_blank" rel="noopener" href="https://andres-portafolio-lilac.vercel.app"><i style="background:#b06fd0"></i>Portafolio</a>
+    </div>
     <button class="config-link mono" id="cfg-projects">⚙ editar proyectos y colores</button>
     <button class="config-link" id="logout" style="display:none;margin-left:8px">Cerrar sesión</button>
   </section>
