@@ -331,9 +331,10 @@
 <div class="modal" id="modal-auth">
   <div class="sheet">
     <h3>Entra a tu tablero</h3>
-    <div class="field"><label>Tu correo</label><input id="au-email" type="email" placeholder="tucorreo@ejemplo.com"></div>
-    <div class="sheetbtns"><button class="btn" id="au-send" style="flex:1">Enviarme el enlace</button></div>
-    <div id="au-status" style="margin-top:14px;font-size:13px;color:var(--fg-soft);line-height:1.4"></div>
+    <div class="field"><label>Correo</label><input id="au-email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="username"></div>
+    <div class="field"><label>Contraseña</label><input id="au-pass" type="password" placeholder="mínimo 6 caracteres" autocomplete="current-password"></div>
+    <div class="sheetbtns"><button class="btn" id="au-send" style="flex:1">Entrar</button></div>
+    <div id="au-status" style="margin-top:14px;font-size:13px;color:var(--fg-soft);line-height:1.4">La primera vez crea tu cuenta sola con ese correo y contraseña.</div>
   </div>
 </div>
 
@@ -793,9 +794,11 @@ document.getElementById('vaciar').onclick=async()=>{
 
 // auth
 const auSend=document.getElementById('au-send');
-if(auSend){auSend.onclick=sendMagic;}
-const auEmail=document.getElementById('au-email');
-if(auEmail){auEmail.addEventListener('keydown',e=>{if(e.key==='Enter')sendMagic();});}
+if(auSend){auSend.onclick=doAuth;}
+['au-email','au-pass'].forEach(idn=>{
+  const el=document.getElementById(idn);
+  if(el)el.addEventListener('keydown',e=>{if(e.key==='Enter')doAuth();});
+});
 const logout=document.getElementById('logout');
 if(logout){logout.onclick=async()=>{if(sb){await sb.auth.signOut();location.reload();}};}
 
@@ -836,13 +839,23 @@ document.getElementById('proj-list').addEventListener('click',async e=>{
 /* ---------- AUTH (solo si Supabase está configurado) ---------- */
 function openAuth(){document.getElementById('modal-auth').classList.add('on');}
 function closeAuth(){document.getElementById('modal-auth').classList.remove('on');}
-async function sendMagic(){
+async function doAuth(){
   const email=document.getElementById('au-email').value.trim();
+  const pass=document.getElementById('au-pass').value;
   const st=document.getElementById('au-status');
-  if(!email){st.textContent='Escribe tu correo.';return;}
-  st.textContent='Enviando…';
-  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split('#')[0]}});
-  st.textContent=error?('Error: '+error.message):'Listo ✓ Revisa tu correo y abre el enlace para entrar.';
+  if(!email||!pass){st.textContent='Pon tu correo y una contraseña.';return;}
+  if(pass.length<6){st.textContent='La contraseña necesita al menos 6 caracteres.';return;}
+  st.textContent='Entrando…';
+  const r=await sb.auth.signInWithPassword({email,password:pass});
+  if(!r.error)return; // entró — onAuthStateChange arranca el tablero
+  // no pudo entrar: intentar crear la cuenta
+  const s=await sb.auth.signUp({email,password:pass});
+  if(s.error){
+    st.textContent=/registered/i.test(s.error.message)?'Contraseña incorrecta para ese correo.':('Error: '+s.error.message);
+    return;
+  }
+  if(s.data&&s.data.session)return; // cuenta creada y dentro
+  st.textContent='Cuenta creada. Apaga “Confirm email” en Supabase (Authentication → Providers → Email) y entra otra vez.';
 }
 
 /* ---------- INIT ---------- */
